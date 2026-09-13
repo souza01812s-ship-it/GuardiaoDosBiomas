@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="theme-color" content="#10131a">
+    <title>O Guardião dos Biomas — Deserto (Fase 1)</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <main id="game-container">
+        <!-- HUD Superior -->
+        <header id="hud">
+            <div class="brand">
+                <span class="brand-mark">G</span>
+                <div>
+                    <strong>O GUARDIÃO DOS BIOMAS</strong>
+                    <small>EXPEDIÇÃO • FASE 1: DESERTO</small>
+                </div>
+            </div>
+
+            <div class="hud-stats">
+                <div class="stat">
+                    <span class="stat-label">VIDAS</span>
+                    <span id="lives">♥♥♥</span>
+                </div>
+
+                <div class="stat jump-stat">
+                    <span class="stat-label">PULOS</span>
+                    <span id="jumps">5 / 5</span>
+                </div>
+
+                <div class="progress-wrap">
+                    <div class="progress-top">
+                        <span>PROGRESSO</span>
+                        <span id="progressText">0%</span>
+                    </div>
+                    <div class="progress-bar">
+                        <i id="progressBar"></i>
+                    </div>
+                </div>
+
+                <button id="journalBtn" class="hud-btn" type="button">📖 Diário</button>
+                <button id="fullscreenBtn" class="hud-btn" type="button">⛶</button>
+            </div>
+        </header>
+
+        <!-- Tela de Seleção de Personagem -->
+        <section id="selection-screen">
+            <div class="selection-card">
+                <span class="eyebrow">NOVA EXPEDIÇÃO • FASE 1</span>
+                <h1>O Guardião<br><em>dos Biomas</em></h1>
+                <p>Escolha seu explorador e atravesse o deserto aprendendo sobre a termorregulação e conservação de água.</p>
+
+                <div class="character-container">
+                    <button class="character-card selected" data-type="emoji" data-name="Alex" data-emoji="🏃" type="button">
+                        <div class="character-visual">🏃</div>
+                        <strong>Alex</strong>
+                        <small>Explorador</small>
+                    </button>
+
+                    <button class="character-card" data-type="emoji" data-name="Bia" data-emoji="🏃‍♀️" type="button">
+                        <div class="character-visual">🏃‍♀️</div>
+                        <strong>Bia</strong>
+                        <small>Exploradora</small>
+                    </button>
+
+                    <button class="character-card" data-type="image" data-name="Léo" type="button">
+                        <div class="character-visual image-character">
+                            <img src="Personagem/Léo.png" alt="Léo" onerror="this.style.display='none'; this.parentElement.textContent='🧙';">
+                        </div>
+                        <strong>Léo</strong>
+                        <small>Guardião</small>
+                    </button>
+                </div>
+
+                <button id="startBtn" class="start-btn" type="button">INICIAR EXPEDIÇÃO <span>→</span></button>
+
+                <div class="controls-hint">
+                    <span><kbd>A</kbd><kbd>D</kbd> Mover</span>
+                    <span><kbd>W</kbd><kbd>ESPAÇO</kbd> Pular</span>
+                    <span>5 pulos por trecho</span>
+                </div>
+            </div>
+        </section>
+
+        <!-- Área de Jogo (Canvas) -->
+        <section id="canvas-container" hidden>
+            <canvas id="gameCanvas"></canvas>
+
+            <div class="objective">
+                <span class="objective-icon">◆</span>
+                <div>
+                    <small>OBJETIVO</small>
+                    <strong id="objectiveText">Fale com a Raposa-do-deserto</strong>
+                </div>
+            </div>
+
+            <div id="message" class="game-message"></div>
+
+            <!-- Controles Touch para Mobile -->
+            <div id="mobile-controls" aria-label="Controles">
+                <div class="mobile-left">
+                    <button class="touch-btn" id="btn-left" type="button">◀</button>
+                    <button class="touch-btn" id="btn-right" type="button">▶</button>
+                </div>
+                <button class="touch-btn jump-touch" id="btn-jump" type="button">↑</button>
+            </div>
+
+            <!-- Caixa de Diálogo com NPCs -->
+            <div id="dialog-box" hidden>
+                <div class="dialog-avatar">🧭</div>
+                <div class="dialog-content">
+                    <strong id="npc-name">Dra. Helena</strong>
+                    <p id="text-content"></p>
+                </div>
+                <button id="closeDialog" type="button">×</button>
+            </div>
+        </section>
+
+        <!-- Modal do Diário do Explorador -->
+        <div id="journal-modal" class="modal" hidden>
+            <div class="modal-card">
+                <button class="modal-close" id="closeJournal" type="button">×</button>
+                <span class="eyebrow">DIÁRIO DO GUARDIÃO</span>
+                <h2>Bioma: Deserto (Fase 1)</h2>
+                <div class="facts">
+                    <article><b>🌡️ Termorregulação</b><p>Altas temperaturas exigem estratégias para dissipar calor e manter o equilíbrio corporal.</p></article>
+                    <article><b>💧 Conservação de Água</b><p>A disponibilidade de água é limitada. Animais do deserto possuem adaptações para reduzir sua perda.</p></article>
+                    <article><b>🦎 Comportamento Adaptativo</b><p>Abrigar-se em cavernas e pedras evita a exposição direta aos raios solares nos horários mais quentes.</p></article>
+                    <article><b>🔥 Recompensa</b><p>Ao concluir o bioma, o Fragmento do Calor é adicionado à sua coleção.</p></article>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tela de Game Over -->
+        <div id="game-over" class="overlay" hidden>
+            <div class="overlay-card">
+                <span class="eyebrow">EXPEDIÇÃO ENCERRADA</span>
+                <h2>Você ficou sem vidas</h2>
+                <p>O calor e as condições extremas do deserto desaceleraram sua jornada. Tente novamente!</p>
+                <button id="restartBtn" class="start-btn" type="button">REINICIAR EXPEDIÇÃO ↻</button>
+            </div>
+        </div>
+
+        <!-- Tela de Vitória da Fase -->
+        <div id="victory" class="overlay" hidden>
+            <div class="overlay-card">
+                <span class="eyebrow">FASE 1 CONCLUÍDA</span>
+                <h2>Fragmento do Calor Conquistado! 🔥</h2>
+                <p>Você compreendeu como os animais se adaptam ao deserto e superou o desafio final.</p>
+                <button id="victoryRestart" class="start-btn" type="button">JOGAR NOVAMENTE ↻</button>
+            </div>
+        </div>
+    </main>
+
+    <script src="script.js"></script>
+</body>
+</html>
