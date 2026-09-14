@@ -593,6 +593,38 @@ kbd {
     line-height: 1.45;
 }
 
+/* Suporte e Otimização para Tablets e Telas Touch */
+@media (max-width: 1024px), (pointer: coarse) {
+    #mobile-controls {
+        display: flex !important;
+        bottom: 24px;
+        left: 24px;
+        right: 24px;
+    }
+
+    .touch-btn {
+        width: 68px;
+        height: 68px;
+        font-size: 24px;
+        border-radius: 18px;
+        background: rgba(12, 16, 23, 0.75);
+        border: 2px solid rgba(255, 255, 255, 0.3);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+    }
+
+    .jump-touch {
+        width: 82px;
+        height: 82px;
+        font-size: 28px;
+        background: rgba(232, 184, 91, 0.95);
+        border-color: #ffe07c;
+    }
+
+    #dialog-box {
+        bottom: 110px !important;
+    }
+}
+
 @media (max-width: 800px) {
     #hud {
         min-height: 58px;
@@ -644,10 +676,6 @@ kbd {
         left: 10px;
         top: 10px;
         max-width: 230px;
-    }
-
-    #mobile-controls {
-        display: flex;
     }
 }
 

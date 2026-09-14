@@ -149,7 +149,6 @@ const clouds = [
     { x: 6900, y: 90, s: .8 }
 ];
 
-// Perguntas ajustadas conforme o Roteiro Educativo
 const questions = {
     fox: {
         name: "Raposa-do-deserto 🦊",
@@ -298,7 +297,6 @@ function update(dt, time) {
     if (player.invulnerable > 0) player.invulnerable -= dt;
     if (world.shake > 0) world.shake = Math.max(0, world.shake - dt * 30);
 
-    // Queda na areia profunda
     if (player.y > H() + 220) {
         loseLife("Você afundou na areia movediça!");
     }
@@ -660,7 +658,6 @@ function render(time) {
     drawVignette(width, height);
 }
 
-// CÉU: Ensolarado de Deserto
 function drawSky(width, height, time) {
     const gradient = ctx.createLinearGradient(0, 0, 0, height);
     gradient.addColorStop(0, "#fbc02d");
@@ -685,7 +682,6 @@ function drawCloud(x, y, s) {
     ctx.fill();
 }
 
-// DUNAS DE AREIA AO FUNDO (Fiel ao Deserto)
 function drawFarDunes(time, height) {
     const base = height * 0.68;
 
@@ -702,7 +698,6 @@ function drawFarDunes(time, height) {
     ctx.fill();
 }
 
-// AREIA MOVEDIÇA / DUNAS INFERIORES
 function drawWorldGround(height) {
     const sandY = Math.min(height - 80, 545);
 
@@ -713,15 +708,12 @@ function drawWorldGround(height) {
     ctx.fillRect(-100, sandY - 4, world.width + 300, 5);
 }
 
-// OÁSIS E ENTRADA DA CAVERNA (Roteiro)
 function drawOasisAndCave(height) {
-    // Oásis próximo ao camelo (x ~ 3700 - 4100)
     ctx.fillStyle = "#4fc3f7";
     ctx.beginPath();
     ctx.ellipse(3950, 510, 140, 20, 0, 0, Math.PI * 2);
     ctx.fill();
 
-    // Palmeira no oásis
     ctx.fillStyle = "#795548";
     ctx.fillRect(3840, 420, 16, 90);
     ctx.fillStyle = "#2e7d32";
@@ -729,14 +721,12 @@ function drawOasisAndCave(height) {
     ctx.arc(3848, 415, 35, 0, Math.PI * 2);
     ctx.fill();
 
-    // Entrada da Caverna (x ~ 4700 - 5100)
     ctx.fillStyle = "#3e2723";
     ctx.beginPath();
     ctx.arc(4880, 510, 75, Math.PI, 0);
     ctx.fill();
 }
 
-// PLATAFORMAS DE AREIA E PEDRA
 function drawPlatforms(time) {
     for (const p of platforms) {
         const gradient = ctx.createLinearGradient(0, p.y, 0, p.y + p.h);
@@ -1072,22 +1062,31 @@ window.addEventListener("blur", () => {
     keys.jumpQueued = false;
 });
 
+// Suporte Aprimorado a Telas Toque e Tablets (Multi-touch)
 function bindTouch(id, onPress, onRelease) {
     const el = document.getElementById(id);
     if (!el) return;
 
-    el.addEventListener("pointerdown", e => {
+    const start = (e) => {
         e.preventDefault();
-        el.setPointerCapture?.(e.pointerId);
         onPress();
-    });
+    };
 
-    el.addEventListener("pointerup", e => {
+    const end = (e) => {
         e.preventDefault();
-        onRelease?.();
-    });
+        if (onRelease) onRelease();
+    };
 
-    el.addEventListener("pointercancel", () => onRelease?.());
+    el.addEventListener("touchstart", start, { passive: false });
+    el.addEventListener("touchend", end, { passive: false });
+    el.addEventListener("touchcancel", end, { passive: false });
+
+    el.addEventListener("pointerdown", (e) => {
+        if (e.pointerType === "mouse") onPress();
+    });
+    el.addEventListener("pointerup", (e) => {
+        if (e.pointerType === "mouse" && onRelease) onRelease();
+    });
 }
 
 bindTouch("btn-left", () => keys.left = true, () => keys.left = false);
