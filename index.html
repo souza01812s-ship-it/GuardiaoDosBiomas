@@ -1,159 +1,273 @@
 <!DOCTYPE html>
-<html lang="pt-BR">
+<html lang="pt-br">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <meta name="theme-color" content="#10131a">
-    <title>O Guardião dos Biomas — Deserto (Fase 1)</title>
-    <link rel="stylesheet" href="style.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>O Guardião dos Biomas</title>
+
+  <!-- Fontes -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;800&family=Press+Start+2P&family=Silkscreen:wght@400;700&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <main id="game-container">
-        <!-- HUD Superior -->
-        <header id="hud">
-            <div class="brand">
-                <span class="brand-mark">G</span>
-                <div>
-                    <strong>O GUARDIÃO DOS BIOMAS</strong>
-                    <small>EXPEDIÇÃO • FASE 1: DESERTO</small>
-                </div>
-            </div>
 
-            <div class="hud-stats">
-                <div class="stat">
-                    <span class="stat-label">VIDAS</span>
-                    <span id="lives">♥♥♥</span>
-                </div>
+  <!-- BRILHO AMBIENTE -->
+  <div class="ambient-glow"></div>
 
-                <div class="stat jump-stat">
-                    <span class="stat-label">PULOS</span>
-                    <span id="jumps">5 / 5</span>
-                </div>
+  <!-- TELA 1: CARREGAMENTO INICIAL (SPLASH SCREEN) -->
+  <div id="splash-screen" class="splash-screen">
+    <div class="splash-card">
+      <div class="pixel-logo">
+        <span class="logo-icon">🌳</span>
+        <h1 class="splash-title">O GUARDIÃO DOS BIOMAS</h1>
+      </div>
+      <p class="splash-subtitle">UMA JORNADA EDUCACIONAL PELA NATUREZA</p>
+      
+      <!-- CARREGAMENTO DE CACTO -->
+      <div class="cactus-loading-container">
+        <div class="cactus-wrapper">
+          <span class="cactus-bg">🌵</span>
+          <div id="splash-cactus-fill" class="cactus-fill">
+            <span class="cactus-fg">🌵</span>
+          </div>
+        </div>
+        <div id="splash-loading-status" class="splash-loading-status">Iniciando jogo (0%)...</div>
+      </div>
 
-                <div class="progress-wrap">
-                    <div class="progress-top">
-                        <span>PROGRESSO</span>
-                        <span id="progressText">0%</span>
-                    </div>
-                    <div class="progress-bar">
-                        <i id="progressBar"></i>
-                    </div>
-                </div>
+      <button id="fullscreen-btn" class="fullscreen-btn hidden" onclick="enableFullscreen()">
+        <span>📱 ENTRAR EM TELA CHEIA</span>
+      </button>
+    </div>
+  </div>
 
-                <button id="journalBtn" class="hud-btn" type="button">📖 Diário</button>
-                <button id="fullscreenBtn" class="hud-btn" type="button">⛶</button>
-            </div>
-        </header>
+  <!-- TELA 2: LOGIN / CRIAR PERFIL -->
+  <div id="loginScreen" class="screen hidden">
+    <div class="card-container">
+      <div class="hero-banner">
+        <h1>BEM VINDO(A)!</h1>
+        <p>NESSA AVENTURA!</p>
+      </div>
 
-        <!-- Tela de Seleção de Personagem -->
-        <section id="selection-screen">
-            <div class="selection-card">
-                <span class="eyebrow">NOVA EXPEDIÇÃO • FASE 1</span>
-                <h1>O Guardião<br><em>dos Biomas</em></h1>
-                <p>Escolha seu explorador e atravesse o deserto aprendendo sobre a termorregulação e conservação de água.</p>
-
-                <div class="character-container">
-                    <button class="character-card selected" data-type="emoji" data-name="Alex" data-emoji="🏃" type="button">
-                        <div class="character-visual">🏃</div>
-                        <strong>Alex</strong>
-                        <small>Explorador</small>
-                    </button>
-
-                    <button class="character-card" data-type="emoji" data-name="Bia" data-emoji="🏃‍♀️" type="button">
-                        <div class="character-visual">🏃‍♀️</div>
-                        <strong>Bia</strong>
-                        <small>Exploradora</small>
-                    </button>
-
-                    <button class="character-card" data-type="image" data-name="Léo" type="button">
-                        <div class="character-visual image-character">
-                            <img src="Personagem/Léo.png" alt="Léo" onerror="this.style.display='none'; this.parentElement.textContent='🧙';">
-                        </div>
-                        <strong>Léo</strong>
-                        <small>Guardião</small>
-                    </button>
-                </div>
-
-                <button id="startBtn" class="start-btn" type="button">INICIAR EXPEDIÇÃO <span>→</span></button>
-
-                <div class="controls-hint">
-                    <span><kbd>A</kbd><kbd>D</kbd> Mover</span>
-                    <span><kbd>W</kbd><kbd>ESPAÇO</kbd> Pular</span>
-                    <span>5 pulos por trecho</span>
-                </div>
-            </div>
-        </section>
-
-        <!-- Área de Jogo (Canvas) -->
-        <section id="canvas-container" hidden>
-            <canvas id="gameCanvas"></canvas>
-
-            <div class="objective">
-                <span class="objective-icon">◆</span>
-                <div>
-                    <small>OBJETIVO</small>
-                    <strong id="objectiveText">Fale com a Raposa-do-deserto</strong>
-                </div>
-            </div>
-
-            <div id="message" class="game-message"></div>
-
-            <!-- Controles Touch para Mobile / Tablet -->
-            <div id="mobile-controls" aria-label="Controles">
-                <div class="mobile-left">
-                    <button class="touch-btn" id="btn-left" type="button">◀</button>
-                    <button class="touch-btn" id="btn-right" type="button">▶</button>
-                </div>
-                <button class="touch-btn jump-touch" id="btn-jump" type="button">↑</button>
-            </div>
-
-            <!-- Caixa de Diálogo com NPCs -->
-            <div id="dialog-box" hidden>
-                <div class="dialog-avatar">🧭</div>
-                <div class="dialog-content">
-                    <strong id="npc-name">Dra. Helena</strong>
-                    <p id="text-content"></p>
-                </div>
-                <button id="closeDialog" type="button">×</button>
-            </div>
-        </section>
-
-        <!-- Modal do Diário do Explorador -->
-        <div id="journal-modal" class="modal" hidden>
-            <div class="modal-card">
-                <button class="modal-close" id="closeJournal" type="button">×</button>
-                <span class="eyebrow">DIÁRIO DO GUARDIÃO</span>
-                <h2>Bioma: Deserto (Fase 1)</h2>
-                <div class="facts">
-                    <article><b>🌡️ Termorregulação</b><p>Altas temperaturas exigem estratégias para dissipar calor e manter o equilíbrio corporal.</p></article>
-                    <article><b>💧 Conservação de Água</b><p>A disponibilidade de água é limitada. Animais do deserto possuem adaptações para reduzir sua perda.</p></article>
-                    <article><b>🦎 Comportamento Adaptativo</b><p>Abrigar-se em cavernas e pedras evita a exposição direta aos raios solares nos horários mais quentes.</p></article>
-                    <article><b>🔥 Recompensa</b><p>Ao concluir o bioma, o Fragmento do Calor é adicionado à sua coleção.</p></article>
-                </div>
-            </div>
+      <form id="loginForm" class="form-section">
+        <div class="divider-label">
+          <span>CRIAR PERFIL</span>
+          <div class="line"></div>
+        </div>
+        
+        <div class="input-wrapper">
+          <div class="user-icon">
+            <svg viewBox="0 0 24 24" width="22" height="22">
+              <circle cx="12" cy="12" r="9" fill="none" stroke="#FFC17B" stroke-width="2"/>
+              <circle cx="12" cy="9" r="3" fill="none" stroke="#FFC17B" stroke-width="2"/>
+              <path d="M6.5 18c1-2.5 3-3.5 5.5-3.5s4.5 1 5.5 3.5" fill="none" stroke="#FFC17B" stroke-width="2"/>
+            </svg>
+          </div>
+          <div class="input-divider"></div>
+          <input 
+            type="text" 
+            id="usernameInput"
+            class="input-field" 
+            placeholder="Digite seu nome..." 
+            required 
+            autocomplete="off"
+          />
         </div>
 
-        <!-- Tela de Game Over -->
-        <div id="game-over" class="overlay" hidden>
-            <div class="overlay-card">
-                <span class="eyebrow">EXPEDIÇÃO ENCERRADA</span>
-                <h2>Você ficou sem vidas</h2>
-                <p>O calor e as condições extremas do deserto desaceleraram sua jornada. Tente novamente!</p>
-                <button id="restartBtn" class="start-btn" type="button">REINICIAR EXPEDIÇÃO ↻</button>
-            </div>
-        </div>
+        <div class="form-footer">
+          <label class="terms-group">
+            <input type="checkbox" id="terms" required />
+            <span class="custom-checkbox"></span>
+            <span class="terms-text">
+              Ao continuar, você declara estar de acordo com nossos Termos de Serviço.
+            </span>
+          </label>
 
-        <!-- Tela de Vitória da Fase -->
-        <div id="victory" class="overlay" hidden>
-            <div class="overlay-card">
-                <span class="eyebrow">FASE 1 CONCLUÍDA</span>
-                <h2>Fragmento do Calor Conquistado! 🔥</h2>
-                <p>Você compreendeu como os animais se adaptam ao deserto e superou o desafio final.</p>
-                <button id="victoryRestart" class="start-btn" type="button">JOGAR NOVAMENTE ↻</button>
-            </div>
+          <button type="submit" class="btn-submit" id="submitBtn">
+            CONFIRMAR PERFIL!
+          </button>
         </div>
-    </main>
+      </form>
+    </div>
+  </div>
 
-    <script src="script.js"></script>
+  <!-- HUD SUPERIOR DO LOBBY -->
+  <header class="top-hud hidden">
+    <div class="biom-target">
+      <div class="icon-wrapper">🌵</div>
+      <div class="info">
+        <span class="label">BIOMA ATUAL</span>
+        <span class="value">Deserto</span>
+      </div>
+    </div>
+
+    <div class="lobby-title">O GUARDIÃO DOS BIOMAS</div>
+
+    <div class="resources-bar">
+      <!-- PERFIL DE USUÁRIO COM LOGOUT -->
+      <div class="user-profile-badge">
+        <span id="displayUsername" class="user-name-display">USUÁRIO</span>
+        <button id="logoutBtn" class="logout-btn" title="Sair / Trocar Perfil">SAIR</button>
+      </div>
+
+      <div class="resource-item" title="Moedas de Ouro">
+        <span class="res-icon">🪙</span>
+        <span class="res-val">1,250</span>
+      </div>
+      <div class="resource-item level-item" title="Nível da Conta">
+        <span class="res-icon">⭐</span>
+        <span class="res-val">Nv. 5</span>
+      </div>
+    </div>
+  </header>
+
+  <!-- TELA 3: SELEÇÃO DE PERSONAGEM (LOBBY) -->
+  <main id="character-select-screen" class="main-content hidden">
+    
+    <!-- CARD 1: ALEX -->
+    <div class="card-character" onclick="chooseCharacter('Alex', '#ffd166', 'assets/alex.png', event)">
+      <div class="character-portrait-container">
+        <img src="assets/alex.png" alt="Alex" class="character-portrait" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex'">
+        <div class="fallback-portrait" style="display: none;">
+          <span>🧭</span>
+        </div>
+      </div>
+      <div class="card-overlay-gradient"></div>
+      <div class="card-top-badge">
+        <span class="archetype-tag tag-speed">⚡ AGILIDADE</span>
+      </div>
+      <div class="card-bottom-info">
+        <div class="char-name-box">
+          <h2>Alex</h2>
+          <span class="char-title">Desbravador Veloz</span>
+        </div>
+        <div class="stats-container">
+          <div class="stat-item">
+            <span class="stat-name">Velocidade</span>
+            <div class="stat-bar-bg"><div class="stat-bar-fill" style="width: 90%;"></div></div>
+            <span class="stat-val">90%</span>
+          </div>
+          <div class="stat-item">
+            <span class="stat-name">Resistência</span>
+            <div class="stat-bar-bg"><div class="stat-bar-fill" style="width: 75%;"></div></div>
+            <span class="stat-val">75%</span>
+          </div>
+          <div class="stat-item">
+            <span class="stat-name">Conhecimento</span>
+            <div class="stat-bar-bg"><div class="stat-bar-fill" style="width: 60%;"></div></div>
+            <span class="stat-val">60%</span>
+          </div>
+        </div>
+        <div class="perk-box">✨ Passos Leves</div>
+      </div>
+    </div>
+
+    <!-- CARD 2: BEATRIZ -->
+    <div class="card-character" onclick="chooseCharacter('Beatriz', '#06d6a0', 'assets/beatriz.png', event)">
+      <div class="character-portrait-container">
+        <img src="assets/beatriz.png" alt="Beatriz" class="character-portrait" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex'">
+        <div class="fallback-portrait" style="display: none;">
+          <span>🌿</span>
+        </div>
+      </div>
+      <div class="card-overlay-gradient"></div>
+      <div class="card-top-badge">
+        <span class="archetype-tag tag-bio">🔬 BIOLOGIA</span>
+      </div>
+      <div class="card-bottom-info">
+        <div class="char-name-box">
+          <h2>Beatriz</h2>
+          <span class="char-title">Guardiã da Fauna</span>
+        </div>
+        <div class="stats-container">
+          <div class="stat-item">
+            <span class="stat-name">Velocidade</span>
+            <div class="stat-bar-bg"><div class="stat-bar-fill" style="width: 65%;"></div></div>
+            <span class="stat-val">65%</span>
+          </div>
+          <div class="stat-item">
+            <span class="stat-name">Resistência</span>
+            <div class="stat-bar-bg"><div class="stat-bar-fill" style="width: 70%;"></div></div>
+            <span class="stat-val">70%</span>
+          </div>
+          <div class="stat-item">
+            <span class="stat-name">Conhecimento</span>
+            <div class="stat-bar-bg"><div class="stat-bar-fill" style="width: 100%;"></div></div>
+            <span class="stat-val">100%</span>
+          </div>
+        </div>
+        <div class="perk-box">✨ Análise Botânica</div>
+      </div>
+    </div>
+
+    <!-- CARD 3: CAUÃ -->
+    <div class="card-character" onclick="chooseCharacter('Cauã', '#118ab2', 'assets/caua.png', event)">
+      <div class="character-portrait-container">
+        <img src="assets/caua.png" alt="Cauã" class="character-portrait" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex'">
+        <div class="fallback-portrait" style="display: none;">
+          <span>🎒</span>
+        </div>
+      </div>
+      <div class="card-overlay-gradient"></div>
+      <div class="card-top-badge">
+        <span class="archetype-tag tag-survival">🛡️ SOBREVIVÊNCIA</span>
+      </div>
+      <div class="card-bottom-info">
+        <div class="char-name-box">
+          <h2>Cauã</h2>
+          <span class="char-title">Especialista Relevo</span>
+        </div>
+        <div class="stats-container">
+          <div class="stat-item">
+            <span class="stat-name">Velocidade</span>
+            <div class="stat-bar-bg"><div class="stat-bar-fill" style="width: 70%;"></div></div>
+            <span class="stat-val">70%</span>
+          </div>
+          <div class="stat-item">
+            <span class="stat-name">Resistência</span>
+            <div class="stat-bar-bg"><div class="stat-bar-fill" style="width: 95%;"></div></div>
+            <span class="stat-val">95%</span>
+          </div>
+          <div class="stat-item">
+            <span class="stat-name">Conhecimento</span>
+            <div class="stat-bar-bg"><div class="stat-bar-fill" style="width: 80%;"></div></div>
+            <span class="stat-val">80%</span>
+          </div>
+        </div>
+        <div class="perk-box">✨ Casca Dura</div>
+      </div>
+    </div>
+
+  </main>
+
+  <!-- HUD INFERIOR -->
+  <footer class="bottom-hud hidden">
+    <div class="selected-summary">
+      <div class="summary-text">
+        <div class="label">SELECIONADO</div>
+        <div id="hud-character-name" class="name">NENHUM</div>
+      </div>
+    </div>
+
+    <div class="equipment-slots">
+      <div class="eq-slot" data-tooltip="Cantil">🧪</div>
+      <div class="eq-slot" data-tooltip="Bússola">🧭</div>
+      <div class="eq-slot" data-tooltip="Lupa">🔍</div>
+      <div class="eq-slot" data-tooltip="Mochila">🎒</div>
+    </div>
+
+    <button id="start-btn" class="start-btn disabled" onclick="confirmStart()" disabled>
+      <span>INICIAR</span> <span class="arrow">➔</span>
+    </button>
+  </footer>
+
+  <!-- CANVAS DO JOGO -->
+  <div id="canvas-container" class="canvas-container hidden">
+    <canvas id="gameCanvas" width="960" height="640"></canvas>
+  </div>
+
+  <script src="game.js"></script>
 </body>
 </html>
